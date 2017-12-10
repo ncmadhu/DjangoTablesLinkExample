@@ -26,11 +26,9 @@ def user_registration(request):
                     email=form.cleaned_data['email'],
                     )
             return HttpResponseRedirect('/users/login/')
-        else:
-            return HttpResponseRedirect('/users/register/')
     else:
         form = RegistrationForm() 
-        return render(request, 'register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 def user_login(request):
     """
@@ -39,17 +37,13 @@ def user_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = authenticate(request, username=username, password=password)
+            user = form.login(request)
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect('/app/home')
-            else:
-                return HttpResponseRedirect('/users/login')
     else:
         form = LoginForm()
-        return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 def user_logout(request):
     """
