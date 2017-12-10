@@ -4,6 +4,10 @@
 {% block title %}User Registration{% endblock %}
 {% block head %}User Registration{% endblock %}
 {% block content %}
-    {% crispy form %}
-    <a href="/users/login/">Login</a>
+	<div class="col-md-6">
+		<div class="well">
+    		{% crispy form %}
+		</div>
+		<a href="/users/login/">Login</a>
+	</div>
 {% endblock %}
