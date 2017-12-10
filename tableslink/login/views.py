@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -49,5 +49,6 @@ def user_logout(request):
     """
     Handles users logout
     """
+    logout(request)
     return HttpResponseRedirect('/users/login')
     
