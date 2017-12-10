@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -7,6 +9,8 @@ from crispy_forms.bootstrap import Field, TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Fieldset
 
+username_regex = re.compile('^[\w.@ +-]+$',re.UNICODE)
+
 class RegistrationForm(forms.Form):
     """
     Form to handle user registration
@@ -15,7 +19,7 @@ class RegistrationForm(forms.Form):
     first_name =  forms.CharField(required=True, max_length=255)
     last_name = forms.CharField(required=True, max_length=255)
     email = forms.EmailField(required=True)
-    username = forms.RegexField(regex=r'^w+$', widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Username"), error_messages={ 'invalid': _("This value must contain only letters, numbers and underscores.") })
+    username = forms.RegexField(regex=username_regex, widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Username"), error_messages={ 'invalid': _("This value must contain only letters, numbers and underscores.") })
     password = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Confirm Password"))
 
@@ -41,7 +45,6 @@ class RegistrationForm(forms.Form):
         self.helper.form_id = 'id-registration-data-form'
         self.helper.form_method = 'post'
         self.helper.form_action = ''
-        self.helper.form_class = 'form-horizontal'
         self.helper.form_class = 'bootstrap-horizontal'
         self.helper.add_input(Submit('submit', 'Submit', css_class='btn-success'))
         self.helper.layout = Layout(
@@ -52,3 +55,27 @@ class RegistrationForm(forms.Form):
                     Field('email', placeholder='Your email id'),
                     Field('password', placeholder='Enter password'),
                     Field('confirm_password', placeholder='Type password again'),),)
+
+
+class LoginForm(forms.Form):
+    """
+    Form to handle user login
+    """
+    username = forms.RegexField(regex=username_regex, widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Username"), error_messages={ 'invalid': _("This value must contain only letters, numbers and underscores.") })
+    password = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize form
+        """
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-login-data-form'
+        self.helper.form_method = 'post'
+        self.helper.form_action = ''
+        self.helper.form_class = 'bootstrap-horizontal'
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+        self.helper.layout = Layout(
+                Fieldset('User Details',
+                    Field('username', placeholder='Choose a user name'),
+                    Field('password', placeholder='Enter password'),),)

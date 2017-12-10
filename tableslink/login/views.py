@@ -3,10 +3,11 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm, LoginForm
 
 # Create your views here.
 
@@ -24,13 +25,35 @@ def user_registration(request):
                     password=form.cleaned_data['password'],
                     email=form.cleaned_data['email'],
                     )
-            return HttpReponseRedirect('/users/success/')
+            return HttpResponseRedirect('/users/login/')
+        else:
+            return HttpResponseRedirect('/users/register/')
     else:
         form = RegistrationForm() 
         return render(request, 'register.html', {'form': form})
 
-def user_login():
-    pass
+def user_login(request):
+    """
+    Handles users login
+    """
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/app/home')
+            else:
+                return HttpResponseRedirect('/users/login')
+    else:
+        form = LoginForm()
+        return render(request, 'login.html', {'form': form})
 
-def user_logout():
-    pass
+def user_logout(request):
+    """
+    Handles users logout
+    """
+    return HttpResponseRedirect('/users/login')
+    
